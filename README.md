@@ -1,4 +1,4 @@
-# toon: Token-Oriented Object Notation for R
+# toon <a href='https://github.com/laresbernardo/toon' target="_blank"><img src='man/figures/toon.png' align="right" height="139" /></a>
 
 `toon` is a **lightweight R package** that provides functions to serialize native R objects (lists, data frames, vectors) into the **Token-Oriented Object Notation** (TOON) format.
 
