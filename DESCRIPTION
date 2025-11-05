@@ -1,0 +1,22 @@
+Package: toon
+Type: Package
+Title: Token-Oriented Object Notation (TOON)
+Version: 0.0.0.9000
+Authors@R: c(
+    person("Bernardo", "Lares", , "laresbernardo@gmail.com", c("aut", "cre")))
+Maintainer: Bernardo Lares <laresbernardo@gmail.com>
+Description: Token-Oriented Object Notation (TOON) is a compact, human-readable 
+    serialization format designed for passing structured data to Large Language
+    Models with significantly reduced token usage. It's intended for LLM input
+    as a lossless, drop-in representation of JSON data.
+Depends:
+    R (>= 3.5.0)
+URL: https://github.com/laresbernardo/toon
+BugReports: https://github.com/laresbernardo/toon/issues
+RoxygenNote: 7.3.3
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Config/testthat/edition: 3
+Suggests: 
+    testthat (>= 3.0.0)
