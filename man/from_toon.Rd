@@ -14,31 +14,5 @@ The reconstructed R object (list, vector, or data frame).
 }
 \description{
 Parses a TOON string and reconstructs the corresponding R list,
-vector, or data frame structure. This function acts as the inverse of 
-\code{\link{as_toon}}.
-}
-\examples{
-# 1. Simple Object (Named List)
-toon_obj <- 'version: 1.0\nis_active: true\nuser_id: 99'
-from_toon(toon_obj)
-# Expected output: list(version = 1, is_active = TRUE, user_id = 99)
-
-# 2. Expanded Array (Unnamed List)
-toon_array <- '[3]:\n - "apple"\n - host: "red"\n   weight: 150\n - "banana"'
-from_toon(toon_array)
-# Expected output: list("apple", list(host = "red", weight = 150), "banana")
-
-# 3. Data Frame
-toon_df <- '[2]{time,action,success}:\n 9.1,"login",true\n 15.4,"update",false'
-from_toon(toon_df)
-# Expected output: A data frame with 2 rows and 3 columns
-
-# 4. Primitive Array (Vector)
-toon_vec <- '[3]: 10,20,"thirty"'
-from_toon(toon_vec)
-# Expected output: c("10", "20", "thirty") (as all elements are coerced to character due to mix)
-
-}
-\seealso{
-\code{\link{as_toon}}
+vector, or data frame structure.
 }

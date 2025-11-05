@@ -160,7 +160,7 @@ name: "main"'
   expect_equal(as_toon_string(config_obj, .indent = 1), expected_indented)
 })
 
-test_that("as_toon_string.list handles complex nested object (Case 1 recursion fix)", {
+test_that("as_toon_string.list handles complex nested object (Case 1 recursion)", {
   nested_obj <- list(
     config = list(
       key1 = 10,

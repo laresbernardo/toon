@@ -161,8 +161,6 @@ as_toon_string.list <- function(x, .indent = 0, ...) {
   
   nms <- names(x)
   
-  # DELETE THE recursive_toon_call HELPER FUNCTION HERE
-  
   format_primitive_element_local <- function(v) {
     if (is.character(v)) return(quote_toon_string(v, force_quote = TRUE))
     if (is.logical(v)) return(ifelse(is.na(v), "null", tolower(as.character(v))))
@@ -224,7 +222,7 @@ as_toon_string.list <- function(x, .indent = 0, ...) {
       trimmed_line <- trimws(lines_of_val[1], which = "left")
       lines_of_val <- strsplit(formatted_val, "\n")[[1]]
       
-      # FIX: Replace the exact leading indent (make_indent(.indent + 2)) 
+      # Replace the exact leading indent (make_indent(.indent + 2)) 
       # with the array marker (item_indent_str + "- ").
       # This is the ONLY reliable way to strip *only* the recursion-added indent.
       

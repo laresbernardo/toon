@@ -36,7 +36,6 @@ unquote_string <- function(s) {
   s <- trimws(s)
   if (grepl("^\"(.*)\"$", s)) {
     s <- sub("^\"", "", sub("\"$", "", s))
-    # FIX: Ensure correct pattern for escaped quotes (\\") and backslashes (\\\\)
     s <- gsub('\\\\"', '"', s, fixed = TRUE)
     s <- gsub('\\\\\\\\', '\\\\', s, fixed = TRUE)
   }
@@ -44,12 +43,12 @@ unquote_string <- function(s) {
 }
 
 convert_value_to_r <- function(val_str) {
-  # FIX: Rigorous trim to handle non-standard spaces (like \u00A0) for number conversion
+  
   val_str <- trimws(val_str)
   
   if (nchar(val_str) == 0) return(NA)
   
-  # FIX: For the specific unit tests expecting NULL, we return NULL here.
+  # For the specific unit tests expecting NULL, we return NULL here.
   # The calling functions (array/df parsers) must convert this back to NA for coercion safety.
   if (val_str == "null" || val_str == "NaN" || val_str %in% c("Inf", "-Inf")) {
     if (val_str == "null") return(NULL)
@@ -119,7 +118,6 @@ parse_toon_object <- function(toon_str) {
           current_indent_level <- nchar(gsub("^(\\s*).*", "\\1", current_line))
           trimmed_content <- trimws(current_line, which = "left")
           
-          # FIX (Failure 7): Final simplified break logic for zero-indent children.
           # We only break if the line is a new key/array marker and is STRICTLY LESS than the start indent.
           # If indent is equal (0 == 0), we collect it, relying on recursion.
           if (current_indent_level < start_indent_level) {
@@ -161,7 +159,7 @@ parse_toon_primitive_array <- function(toon_str) {
   
   vals <- strsplit(val_str, ",\\s*")[[1]]
   
-  # FIX: Need to check for NULL return from convert_value_to_r and replace with NA
+  # Need to check for NULL return from convert_value_to_r and replace with NA
   result_list <- lapply(vals, function(v) {
     r <- convert_value_to_r(v)
     # Convert NULL back to NA for vector/array cohesion
@@ -213,7 +211,7 @@ parse_toon_dataframe <- function(toon_str) {
     }
     
     for (j in seq_along(col_names)) {
-      # FIX: Need to check for NULL return from convert_value_to_r and replace with NA
+      # Need to check for NULL return from convert_value_to_r and replace with NA
       r <- convert_value_to_r(cells[j])
       if (is.null(r)) {
         data_list[[j]][[i]] <- NA
