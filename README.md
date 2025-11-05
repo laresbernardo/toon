@@ -1,6 +1,6 @@
 # toon <a href='https://github.com/laresbernardo/toon' target="_blank"><img src='man/figures/toon.png' align="right" height="139" /></a>
 
-`toon` is a **lightweight R package** that provides functions to serialize native R objects (lists, data frames, vectors) into the **Token-Oriented Object Notation** (TOON) format.
+`toon` is a dependency-free R package that provides functions to serialize native R objects (lists, data frames, vectors) into the **Token-Oriented Object Notation** (TOON) format.
 
 TOON is specifically designed to **significantly reduce token usage** when passing structured data to Large Language Models (LLMs). It offers a substantial token-efficiency advantage over traditional formats like JSON, particularly for **tabular or highly uniform data**.
 
@@ -84,11 +84,10 @@ Servers:
 
 ### Tabular Data Efficiency (The Key Benefit)
 
-While the complex example shows `toon`'s restructuring capabilities, its **most powerful use case** is dramatically reducing the size of large datasets.
+While the complex example shows `toon`'s restructuring capabilities, its **most powerful use case** is dramatically reducing the size of datasets.
 
 ```r
-x <- iris # The simple 150 rows and 5 columns dataset
-
+x <- iris # A simple 150 rows and 5 columns dataset
 # Compare the TOON string size to a standard JSON string
 nchar(as_toon(x)) / nchar(jsonlite::toJSON(x)) 
 # Result: ~0.28 (Same info, roughly 28% the size)
