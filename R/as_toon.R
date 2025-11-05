@@ -1,3 +1,54 @@
+####################################################################
+#' Convert R Objects to TOON (Token-Oriented Object Notation)
+#'
+#' Converts a variety of R objects, including named lists (objects),
+#' unnamed lists, vectors (arrays), and data frames, into a character string
+#' formatted according to TOON (Token-Oriented Object Notation) specification.
+#'
+#' TOON is designed as a highly human-readable, lightweight data serialization
+#' format that supports nested structures.
+#'
+#' @param x The R object to be converted. Supported types include:
+#'   \itemize{
+#'     \item Named lists
+#'     \item Unnamed lists and atomic vectors
+#'     \item Data frames
+#'     \item Primitive types (numeric, character, logical, NULL)
+#'   }
+#' @param ... Additional arguments passed to specific S3 methods (e.g., internal
+#'   indentation parameters).
+#' @return A character vector of class \code{toon}, containing the fully 
+#' formatted TOON string.
+#' @examples
+#' # 1. Simple Object (Named List)
+#' config_obj <- list(
+#'   version = 1.0,
+#'   is_active = TRUE,
+#'   user_id = 99
+#' )
+#' as_toon(config_obj)
+#'
+#' # 2. Expanded Array (Unnamed List)
+#' items <- list(
+#'   "apple",
+#'   list(color = "red", weight = 150),
+#'   "banana"
+#' )
+#' as_toon(items)
+#'
+#' # 3. Data Frame
+#' df <- data.frame(
+#'   time = c(9.1, 15.4),
+#'   action = c("login", "update"),
+#'   success = c(TRUE, FALSE)
+#' )
+#' as_toon(df)
+#' @export
+as_toon <- function(x, ...) {
+  s <- as_toon_string(x, ...)
+  structure(s, class = "toon")
+}
+
 as_toon_string <- function(x, ...) {
   is_multi_atomic <- is.atomic(x) && length(x) > 1 && !is.list(x)
   if (is_multi_atomic) {
@@ -79,7 +130,8 @@ as_toon_string.data.frame <- function(x, .indent = 0, ...) {
   
   # Standard Logic: Header is at .indent, Rows are at .indent + 1
   indent_str <- make_indent(.indent)
-  row_indent_str <- make_indent(.indent + 1)
+  row_indent_level <- if (.indent >= 2) .indent else .indent + 1
+  row_indent_str <- make_indent(row_indent_level)
   
   cols <- paste(names(x), collapse = ",")
   header <- sprintf("%s[%d]{%s}:", indent_str, nrow(x), cols)
@@ -109,9 +161,7 @@ as_toon_string.list <- function(x, .indent = 0, ...) {
   
   nms <- names(x)
   
-  recursive_toon_call <- function(val, current_indent) {
-    as_toon_string(val, .indent = current_indent, ...)
-  }
+  # DELETE THE recursive_toon_call HELPER FUNCTION HERE
   
   format_primitive_element_local <- function(v) {
     if (is.character(v)) return(quote_toon_string(v, force_quote = TRUE))
@@ -131,13 +181,14 @@ as_toon_string.list <- function(x, .indent = 0, ...) {
       is_complex <- is.list(val) && length(val) > 0 || is.data.frame(val)
       
       if (is_complex) {
-        # FIX: Call complex multi-line value with current .indent, not .indent + 1.
-        # This aligns the array/data.frame header to the object's body indent.
-        formatted_val <- recursive_toon_call(val, .indent = .indent) 
+        # Call complex multi-line value with current .indent, not .indent + 1.
+        # This resolves the duplicate .indent issue by allowing the dispatch 
+        # to find its arguments cleanly.
+        formatted_val <- as_toon_string(val, .indent = .indent, ...) 
         lines[i] <- sprintf("%s%s:\n%s", obj_indent_str, key, formatted_val)
       } else {
         # Primitives still need + 1 indent for the inline value.
-        formatted_val <- recursive_toon_call(val, .indent = .indent + 1)
+        formatted_val <- as_toon_string(val, .indent = .indent + 1, ...) 
         lines[i] <- sprintf("%s%s: %s", obj_indent_str, key, formatted_val)
       }
     }
@@ -166,13 +217,27 @@ as_toon_string.list <- function(x, .indent = 0, ...) {
     
     if (is_complex_value) {
       # Recurse with .indent + 2 (Standard for nested object/array content)
-      formatted_val <- as_toon_string(val, .indent = .indent + 2, ...) 
-      
+      formatted_val <- as_toon_string(val, .indent = .indent + 2, ...)      
       lines_of_val <- strsplit(formatted_val, "\n")[[1]]
       
-      # Replace the indent of the *nested key* (at .indent + 2) 
-      # with the array marker (' - ') at .indent + 1.
-      lines_of_val[1] <- sub(make_indent(.indent + 2), paste0(item_indent_str, "- "), lines_of_val[1], fixed = TRUE)
+      # Trim the line and prepend the array marker. 
+      trimmed_line <- trimws(lines_of_val[1], which = "left")
+      lines_of_val <- strsplit(formatted_val, "\n")[[1]]
+      
+      # FIX: Replace the exact leading indent (make_indent(.indent + 2)) 
+      # with the array marker (item_indent_str + "- ").
+      # This is the ONLY reliable way to strip *only* the recursion-added indent.
+      
+      leading_indent_to_replace <- make_indent(.indent + 2)
+      
+      # Substitute the exact indent used for recursion with the desired array prefix
+      lines_of_val[1] <- sub(
+        pattern = leading_indent_to_replace, 
+        replacement = paste0(item_indent_str, "- "), 
+        x = lines_of_val[1], 
+        fixed = TRUE
+      )
+      
       items[i] <- paste(lines_of_val, collapse = "\n")
       
     } else {
@@ -185,13 +250,9 @@ as_toon_string.list <- function(x, .indent = 0, ...) {
   return(paste(header, paste(items, collapse = "\n"), sep = "\n"))
 }
 
-
-as_toon <- function(x, ...) {
-  s <- as_toon_string(x, ...)
-  structure(s, class = "toon")
-}
-
+#' @name as_toon
 #' @exportS3Method print toon
+#' @export
 print.toon <- function(x, ...) {
   cat(x, "\n", sep = "")
   invisible(x)
