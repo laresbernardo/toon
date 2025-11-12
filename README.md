@@ -11,7 +11,11 @@ TOON is specifically designed to **significantly reduce token usage** when passi
 Install the development version directly from GitHub:
 
 ```r
-# If you don't have 'remotes' installed, run: install.packages('remotes')
+# CRAN version
+install.packages("toon")
+
+# Dev version
+## If you don't have 'remotes' installed, run: install.packages('remotes')
 remotes::install_github("laresbernardo/toon")
 ```
 
