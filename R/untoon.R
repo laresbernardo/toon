@@ -7,7 +7,7 @@
 #' @param toon_string A character vector containing the TOON string.
 #' @return The reconstructed R object (list, vector, or data frame).
 #' @export
-from_toon <- function(toon_string) {
+untoon <- function(toon_string) {
   # Clean input string: collapse lines and trim overall whitespace.
   cleaned_toon <- trimws(paste(toon_string, collapse = "\n"))
   
@@ -140,7 +140,7 @@ parse_toon_object <- function(toon_str) {
             val_block <- character(0)
           }
           
-          result[[key_name]] <- from_toon(paste(val_block, collapse = "\n"))
+          result[[key_name]] <- untoon(paste(val_block, collapse = "\n"))
           i <- j
         } else {
           result[[key_name]] <- list()
@@ -191,12 +191,12 @@ parse_toon_dataframe <- function(toon_str) {
   col_names <- trimws(strsplit(header_groups[3], ",")[[1]])
   
   if (num_rows == 0) {
-    return(setNames(data.frame(matrix(ncol = length(col_names), nrow = 0)), col_names))
+    return(stats::setNames(data.frame(matrix(ncol = length(col_names), nrow = 0)), col_names))
   }
   
   row_lines <- lines[2:length(lines)]
   
-  data_list <- setNames(lapply(col_names, function(x) vector("list", num_rows)), col_names)
+  data_list <- stats::setNames(lapply(col_names, function(x) vector("list", num_rows)), col_names)
   
   for (i in seq_len(num_rows)) {
     if (i > length(row_lines)) break
@@ -279,7 +279,7 @@ parse_toon_expanded_array <- function(toon_str) {
           }
         }
         
-        item_obj <- from_toon(paste(val_block, collapse = "\n"))
+        item_obj <- untoon(paste(val_block, collapse = "\n"))
         
         result <- append(result, list(item_obj))
         i <- j

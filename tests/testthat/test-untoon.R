@@ -76,11 +76,11 @@ test_that("parse_toon_object handles nested objects correctly (recursion)", {
 
 test_that("parse_toon_dataframe handles empty data frames", {
   toon_empty_df <- '[]'
-  # Expecting a list from from_toon if passed '[]' as a top-level. 
+  # Expecting a list from untoon if passed '[]' as a top-level. 
   # parse_toon_dataframe needs the header format to work.
   df <- data.frame(a = numeric(), b = logical())
   empty_header <- '[0]{a,b}:'
-  expected_df <- setNames(data.frame(matrix(ncol = 2, nrow = 0)), c("a", "b"))
+  expected_df <- stats::setNames(data.frame(matrix(ncol = 2, nrow = 0)), c("a", "b"))
   expect_equal(parse_toon_dataframe(empty_header), expected_df)
 })
 
@@ -131,25 +131,25 @@ test_that("parse_toon_expanded_array handles nested data.frame", {
   expect_equal(parse_toon_expanded_array(toon_array_with_df), expected_r)
 })
 
-# --- Test Top-Level Dispatch (from_toon) ---
+# --- Test Top-Level Dispatch (untoon) ---
 
-test_that("from_toon dispatches to correct parser for top-level object", {
+test_that("untoon dispatches to correct parser for top-level object", {
   toon_obj <- 'key: "value"'
-  expect_equal(from_toon(toon_obj), list(key = "value"))
+  expect_equal(untoon(toon_obj), list(key = "value"))
 })
 
-test_that("from_toon dispatches to correct parser for top-level primitive array", {
+test_that("untoon dispatches to correct parser for top-level primitive array", {
   toon_arr <- '[2]: 1,2'
-  expect_equal(from_toon(toon_arr), c(1L, 2L))
+  expect_equal(untoon(toon_arr), c(1L, 2L))
 })
 
-test_that("from_toon dispatches to correct parser for top-level expanded array", {
+test_that("untoon dispatches to correct parser for top-level expanded array", {
   toon_exp_arr <- '[2]:\n - 1\n - 2'
-  expect_equal(from_toon(toon_exp_arr), list(1L, 2L))
+  expect_equal(untoon(toon_exp_arr), list(1L, 2L))
 })
 
-test_that("from_toon dispatches to correct parser for top-level data frame", {
+test_that("untoon dispatches to correct parser for top-level data frame", {
   toon_df <- '[1]{x}:\n 1'
   expected_df <- data.frame(x = 1L)
-  expect_equal(from_toon(toon_df), expected_df)
+  expect_equal(untoon(toon_df), expected_df)
 })

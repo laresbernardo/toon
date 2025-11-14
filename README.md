@@ -8,7 +8,7 @@ TOON is specifically designed to **significantly reduce token usage** when passi
 
 ## Installation
 
-Install the development version directly from GitHub:
+Install the stable or development versions:
 
 ```r
 # CRAN version
