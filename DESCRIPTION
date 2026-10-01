@@ -3,8 +3,8 @@ Type: Package
 Title: Token-Oriented Object Notation (TOON)
 Version: 0.0.1.9001
 Authors@R: c(
-    person("Bernardo", "Lares", , "hello@bervos.org", c("aut", "cre")))
-Maintainer: Bernardo Lares <hello@bervos.org>
+    person("Bernardo", "Lares", , "toon@bervos.org", c("aut", "cre")))
+Maintainer: Bernardo Lares <toon@bervos.org>
 Description: Token-Oriented Object Notation (TOON) is a compact, human-readable 
     serialization format designed for passing structured data to Large Language
     Models with significantly reduced token usage. It's intended for LLM input

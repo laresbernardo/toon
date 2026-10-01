@@ -18,6 +18,6 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Bernardo Lares \email{hello@bervos.org}
+\strong{Maintainer}: Bernardo Lares \email{toon@bervos.org}
 
 }
